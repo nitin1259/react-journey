@@ -1,18 +1,18 @@
-import React from "react";
-import "./App.css";
+import React, { Component } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <h1>I m a React App !!!</h1>
-    </div>
-  );
-  // compiler will convert over code to below code (behind the scenes)
-  // return React.createElement(
-  //   "div",
-  //   { className: "App" },
-  //   React.createElement("h1", null, "I m a React App !!!")
-  // );
+import Layout from './components/Layout/Layout';
+import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
+
+class App extends Component {
+  render () {
+    return (
+      <div>
+        <Layout>
+          <BurgerBuilder />
+        </Layout>
+      </div>
+    );
+  }
 }
 
 export default App;
