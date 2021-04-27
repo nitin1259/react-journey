@@ -1,69 +1,68 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
+// import axios from 'axios';
+import axios from '../../axios';
 
-import Post from "../../components/Post/Post";
-import FullPost from "../../components/FullPost/FullPost";
-import NewPost from "../../components/NewPost/NewPost";
-import "./Blog.css";
-import axios from "axios";
+import Post from '../../components/Post/Post';
+import FullPost from '../../components/FullPost/FullPost';
+import NewPost from '../../components/NewPost/NewPost';
+import './Blog.css';
 
 class Blog extends Component {
-  state = {
-    posts: [],
-    selectedPost: null,
-    isError: false,
-  };
-
-  clickPostHandler = (id) => {
-    console.log(id);
-    this.setState({ selectedPost: id });
-  };
-
-  componentDidMount() {
-    axios
-      .get("/posts")
-      .then((resp) => {
-        const resp_posts = resp.data;
-        const updatedPost = resp_posts.slice(0, 3);
-        this.setState({ posts: updatedPost });
-      })
-      .catch((err) => {
-        console.log(err.message);
-        this.setState({ isError: true });
-      });
-  }
-  render() {
-    let displayPost = (
-      <p style={{ textAlign: "center", color: "red" }}>
-        {" "}
-        Something went wrong.. please wait while we fix it
-      </p>
-    );
-    if (!this.state.isError) {
-      displayPost = this.state.posts.map((el) => {
-        const newpost = { ...el, author: "Nitin" };
-        return (
-          <Post
-            key={newpost.id}
-            title={newpost.title}
-            author={newpost.author}
-            clickPost={() => this.clickPostHandler(newpost.id)}
-          />
-        );
-      });
+    state = {
+        posts: [],
+        selectedPostId: null,
+        error: false
     }
 
-    return (
-      <div>
-        <section className="Posts">{displayPost}</section>
-        <section>
-          <FullPost selectedId={this.state.selectedPost} />
-        </section>
-        <section>
-          <NewPost />
-        </section>
-      </div>
-    );
-  }
+    componentDidMount () {
+        axios.get( '/posts' )
+            .then( response => {
+                const posts = response.data.slice(0, 4);
+                const updatedPosts = posts.map(post => {
+                    return {
+                        ...post,
+                        author: 'Max'
+                    }
+                });
+                this.setState({posts: updatedPosts});
+                // console.log( response );
+            } )
+            .catch(error => {
+                // console.log(error);
+                this.setState({error: true});
+            });
+    }
+
+    postSelectedHandler = (id) => {
+        this.setState({selectedPostId: id});
+    }
+
+    render () {
+        let posts = <p style={{textAlign: 'center'}}>Something went wrong!</p>;
+        if (!this.state.error) {
+            posts = this.state.posts.map(post => {
+                return <Post 
+                    key={post.id} 
+                    title={post.title} 
+                    author={post.author}
+                    clicked={() => this.postSelectedHandler(post.id)} />;
+            });
+        }
+
+        return (
+            <div>
+                <section className="Posts">
+                    {posts}
+                </section>
+                <section>
+                    <FullPost id={this.state.selectedPostId} />
+                </section>
+                <section>
+                    <NewPost />
+                </section>
+            </div>
+        );
+    }
 }
 
 export default Blog;
