@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import "./NewPost.module.css";
+import "./NewPost.css";
 
 class NewPost extends Component {
   state = {
