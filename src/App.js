@@ -1,18 +1,16 @@
-import React from "react";
+import React, { Component } from "react";
+
+import Counter from "./containers/Counter/Counter";
 import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <h1>I m a React App !!!</h1>
-    </div>
-  );
-  // compiler will convert over code to below code (behind the scenes)
-  // return React.createElement(
-  //   "div",
-  //   { className: "App" },
-  //   React.createElement("h1", null, "I m a React App !!!")
-  // );
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <Counter />
+      </div>
+    );
+  }
 }
 
 export default App;
