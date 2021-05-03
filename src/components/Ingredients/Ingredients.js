@@ -1,71 +1,87 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import IngredientForm from "./IngredientForm";
 import IngredientList from "./IngredientList";
+import ErrorModal from "../UI/ErrorModal";
 import Search from "./Search";
 
-function Ingredients() {
-  const [ingredientList, setIngredientList] = useState([]);
+const Ingredients = () => {
+  const [userIngredients, setUserIngredients] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
 
   useEffect(() => {
-    axios
-      .get(
-        "https://burger-react-app-3abe8-default-rtdb.firebaseio.com/ing.json"
-      )
-      .then((resp) => {
-        const loadedIngredients = [];
-        // console.log(resp);
+    console.log("RENDERING INGREDIENTS", userIngredients);
+  }, [userIngredients]);
 
-        for (const key in resp.data) {
-          loadedIngredients.push({
-            id: key,
-            title: resp.data[key].title,
-            amount: resp.data[key].amount,
-          });
-        }
-        setIngredientList(loadedIngredients);
-      });
+  const filteredIngredientsHandler = useCallback((filteredIngredients) => {
+    setUserIngredients(filteredIngredients);
   }, []);
 
   const addIngredientHandler = (ingredient) => {
-    axios
-      .post(
-        "https://burger-react-app-3abe8-default-rtdb.firebaseio.com/ing.json",
-        ingredient
-      )
-      .then((resp) => {
-        // console.log(resp.data.name);
-        setIngredientList((prevIngredients) => [
-          ...prevIngredients,
-          { id: resp.data.name, ...ingredient },
-        ]);
+    setIsLoading(true);
+    fetch(
+      "https://burger-react-app-3abe8-default-rtdb.firebaseio.com/ing.json",
+      {
+        method: "POST",
+        body: JSON.stringify(ingredient),
+        headers: { "Content-Type": "application/json" },
+      }
+    )
+      .then((response) => {
+        setIsLoading(false);
+        return response.json();
       })
-      .catch((err) => {
-        console.log(err);
+      .then((responseData) => {
+        setUserIngredients((prevIngredients) => [
+          ...prevIngredients,
+          { id: responseData.name, ...ingredient },
+        ]);
       });
   };
 
-  const deleteIngredientHandler = (ing_id) => {
-    setIngredientList((prevIngredients) =>
-      prevIngredients.filter((ing) => ing.id !== ing_id)
-    );
+  const removeIngredientHandler = (ingredientId) => {
+    setIsLoading(true);
+    fetch(
+      `https://burger-react-app-3abe8-default-rtdb.firebaseio.com/ing/${ingredientId}.jon`,
+      {
+        method: "DELETE",
+      }
+    )
+      .then((response) => {
+        setIsLoading(false);
+        setUserIngredients((prevIngredients) =>
+          prevIngredients.filter((ingredient) => ingredient.id !== ingredientId)
+        );
+      })
+      .catch((error) => {
+        setError("Something went wrong!");
+        setIsLoading(false);
+      });
+  };
+
+  const clearError = () => {
+    setError(null);
   };
 
   return (
     <div className="App">
-      <IngredientForm onAddIngredients={addIngredientHandler} />
+      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+
+      <IngredientForm
+        onAddIngredient={addIngredientHandler}
+        loading={isLoading}
+      />
 
       <section>
-        <Search />
-        {/* Need to add list here! */}
+        <Search onLoadIngredients={filteredIngredientsHandler} />
         <IngredientList
-          ingredients={ingredientList}
-          onRemoveItem={deleteIngredientHandler}
+          ingredients={userIngredients}
+          onRemoveItem={removeIngredientHandler}
         />
       </section>
     </div>
   );
-}
+};
 
 export default Ingredients;
