@@ -2,6 +2,8 @@ import axios from "axios";
 
 import * as actionTypes from "./actionTypes";
 
+const your_api_key = "AIzaSyBLHaiAm0gGBi2K9cYSm5wH4SV-Sc8H7Yo"; // wrong key
+
 export const authStart = () => {
   return {
     type: actionTypes.AUTH_START,
@@ -49,15 +51,16 @@ export const auth = (email, password, isSignup) => {
       returnSecureToken: true,
     };
     let url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBLHaiAm0gGBi2K9cYSm5wH4SV-Sc8H7Yo";
+      "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" +
+      your_api_key;
     if (!isSignup) {
       url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBLHaiAm0gGBi2K9cYSm5wH4SV-Sc8H7Yo";
+        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" +
+        your_api_key;
     }
     axios
       .post(url, authData)
       .then((response) => {
-        console.log(response);
         const expirationDate = new Date(
           new Date().getTime() + response.data.expiresIn * 1000
         );
