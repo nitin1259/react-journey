@@ -1,18 +1,9 @@
-import React from "react";
-import "./App.css";
+import React from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <h1>I m a React App !!!</h1>
-    </div>
-  );
-  // compiler will convert over code to below code (behind the scenes)
-  // return React.createElement(
-  //   "div",
-  //   { className: "App" },
-  //   React.createElement("h1", null, "I m a React App !!!")
-  // );
-}
+import Ingredients from './components/Ingredients/Ingredients';
+
+const App = props => {
+  return <Ingredients />;
+};
 
 export default App;
