@@ -32,7 +32,7 @@ export const initIngredients = () => {
   return (dispatch) => {
     axios
       .get(
-        "https://burger-react-36bf4-default-rtdb.firebaseio.com/ingredients.json"
+        "https://burger-react-app-3abe8-default-rtdb.firebaseio.com/ingredients.json"
       )
       .then((response) => {
         dispatch(setIngredients(response.data));
