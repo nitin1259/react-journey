@@ -8,7 +8,6 @@ const Auth = (props) => {
   const authContext = useContext(AuthContext);
 
   const loginHandler = () => {
-    console.log("coming in", "Auth");
     authContext.login();
   };
 
